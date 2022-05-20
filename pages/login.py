@@ -3,11 +3,11 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import constants as tk_const, messagebox
 
-from utils import Response
+from core import CoreApp, Response
 
 
 class LoginPage(tk.Frame):
-    def __init__(self, parent, ctrl):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.ctrl = ctrl
         self.render()
@@ -53,9 +53,13 @@ class LoginPage(tk.Frame):
 
         res: Response = self.ctrl.apis.req_login(id_admin, password_admin)
         if res.is_err():
-            messagebox.showerror("Error", res.error())
             self.ctrl.show("LoginPage")
             return
 
-        self.ctrl.set_s({"user_data": res.result()})
-        self.ctrl.show("HomePage")
+        res: dict = res.result()
+
+        self.ctrl.set_s({"user_data": res})
+        print(res)
+        if res["is_admin"]:
+            return self.ctrl.show("AdminHomePage")
+        return self.ctrl.show("UserHomePage")

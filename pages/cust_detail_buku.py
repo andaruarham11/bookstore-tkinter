@@ -7,11 +7,11 @@ from tkinter import constants as tk_const, ttk
 
 from PIL import Image, ImageTk
 
-from utils import Response
+from core import CoreApp, Response
 
 
 class DetailBukuPage(tk.Frame):
-    def __init__(self, parent, ctrl):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.btn_beli = None
         self.lbl_harga = None
@@ -98,7 +98,7 @@ class DetailBukuPage(tk.Frame):
     def get_book(self, bookId: str):
         res: Response = self.ctrl.apis.get_book(bookId)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         res: dict = res.result()
 
@@ -121,7 +121,7 @@ class DetailBukuPage(tk.Frame):
 
         res: Response = self.ctrl.apis.do_order(user_id, book_id, qty)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         res: dict = res.result()
 

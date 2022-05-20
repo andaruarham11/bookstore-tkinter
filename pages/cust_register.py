@@ -3,13 +3,14 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import constants as tk_const, messagebox
 
-from utils import Response
+from core import CoreApp, Response
 
 
 class RegisterPage(tk.Frame):
-    def __init__(self, parent, ctrl):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.ctrl = ctrl
+        self.render()
 
     def render(self):
         self.ctrl.title("Register Page")
@@ -55,12 +56,11 @@ class RegisterPage(tk.Frame):
         password_admin = self.txtPass.get()
 
         if id_admin == "" or password_admin == "" or name_admin == "":
-            messagebox.showerror("Error", "all field required")
+            return messagebox.showerror("Error", "all field required")
 
         res: Response = self.ctrl.apis.req_register(id_admin, name_admin, password_admin)
 
         if res.is_err():
-            messagebox.showerror("error", res.error())
             return
 
         self.ctrl.show("LoginPage")

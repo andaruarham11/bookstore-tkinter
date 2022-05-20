@@ -3,11 +3,11 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import constants as tk_const, ttk
 
-from utils import Response
+from core import CoreApp, Response
 
 
 class OrderPage(tk.Frame):
-    def __init__(self, parent, ctrl):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.my_tabel = None
         self.ctrl = ctrl
@@ -43,7 +43,7 @@ class OrderPage(tk.Frame):
         style.map('Treeview', background=[('selected', "#347083")])
 
         # back button
-        back_btn = tk.Button(self, command=lambda: self.ctrl.show("HomePage"), text="Kembali",
+        back_btn = tk.Button(self, command=lambda: self.ctrl.show("UserHomePage"), text="Kembali",
                              font=("Calibri", 15), bd=3, fg="black")
         back_btn.place(x=20, y=80, width=120, height=35)
 
@@ -119,7 +119,7 @@ class OrderPage(tk.Frame):
     def get_book(self, bookId: str):
         res: Response = self.ctrl.apis.get_book(bookId)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         res: dict = res.result()
 
@@ -140,7 +140,7 @@ class OrderPage(tk.Frame):
 
         res: Response = self.ctrl.apis.get_all_orders_by_userid(user_id)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         orders_data = []
         for order in res.result():

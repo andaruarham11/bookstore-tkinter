@@ -3,11 +3,11 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import constants as tk_const, ttk
 
-from utils import Response
+from core import CoreApp, Response
 
 
 class DataBukuPage(tk.Frame):
-    def __init__(self, parent, ctrl):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.my_tabel = None
         self.ctrl = ctrl
@@ -43,7 +43,7 @@ class DataBukuPage(tk.Frame):
         style.map('Treeview', background=[('selected', "#347083")])
 
         # back button
-        back_btn = tk.Button(self, command=lambda: self.ctrl.show("HomePage"), text="Kembali",
+        back_btn = tk.Button(self, command=lambda: self.ctrl.show("UserHomePage"), text="Kembali",
                              font=("Calibri", 15), bd=3, fg="black")
         back_btn.place(x=20, y=80, width=120, height=35)
 
@@ -107,8 +107,7 @@ class DataBukuPage(tk.Frame):
                 tags = "oddrow"
 
             self.my_tabel.insert(parent='', index='end', text=f'{count + 1}', tags=tags, values=(
-                b["id"], b["nama"], b["pengarang"], b["penerbit"], b["kategori"], b["bahasa"], b["harga"], b["stok"])
-                                 )
+                b["id"], b["nama"], b["pengarang"], b["penerbit"], b["kategori"], b["bahasa"], b["harga"], b["stok"]))
 
             count += 1
 
@@ -127,7 +126,7 @@ class DataBukuPage(tk.Frame):
     def get_books(self):
         res: Response = self.ctrl.apis.get_all_books()
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         table_data = []
         for d in res.result():

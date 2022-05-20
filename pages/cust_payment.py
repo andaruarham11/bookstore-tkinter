@@ -7,11 +7,11 @@ from tkinter import constants as tk_const, ttk, filedialog, messagebox
 
 from PIL import Image, ImageTk
 
-from utils import Response
+from core import CoreApp, Response
 
 
 class PaymentPage(tk.Frame):
-    def __init__(self, parent, ctrl):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.ctrl = ctrl
 
@@ -97,7 +97,7 @@ class PaymentPage(tk.Frame):
     def get_book(self, bookId: str):
         res: Response = self.ctrl.apis.get_book(bookId)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         res: dict = res.result()
 
@@ -118,7 +118,7 @@ class PaymentPage(tk.Frame):
 
         res: Response = self.ctrl.apis.get_payment_by_orderid(selected_order_id)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         res: dict = res.result()
         return res
@@ -128,7 +128,7 @@ class PaymentPage(tk.Frame):
 
         res: Response = self.ctrl.apis.get_order(selected_order_id)
         if res.is_err():
-            return self.ctrl.show("HomePage")
+            return self.ctrl.show("UserHomePage")
 
         res: dict = res.result()
 

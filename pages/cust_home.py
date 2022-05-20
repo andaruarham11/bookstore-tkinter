@@ -6,9 +6,11 @@ from tkinter import constants as tk_const
 
 from PIL import Image, ImageTk
 
+from core import CoreApp
 
-class HomePage(tk.Frame):
-    def __init__(self, parent, ctrl):
+
+class UserHomePage(tk.Frame):
+    def __init__(self, parent, ctrl: CoreApp):
         tk.Frame.__init__(self, parent)
         self.ctrl = ctrl
 
