@@ -8,6 +8,7 @@ from tkinter import constants as tk_const, ttk, filedialog, messagebox
 from PIL import Image, ImageTk
 
 from core import CoreApp, Response
+from models.order_status import OrderStatus
 
 
 class DetailOrder(tk.Frame):
@@ -15,16 +16,16 @@ class DetailOrder(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.ctrl = ctrl
 
-        order_data = self.get_order()
+        self.order_data = self.get_order()
         self.is_paid = False
 
-        if order_data['status'] == 'PAID':
+        if self.order_data['status'] != 'WAITING_FOR_PAYMENT':
             self.is_paid = True
             self.payment = self.get_payment()
 
-        self.render(order_data)
+        self.render()
 
-    def render(self, order_data: dict):
+    def render(self):
         self.ctrl.title("Detail Order")
 
         lbl_title = tk.Label(self, text="Detail Order", fg="black", font=("Calibri", 30, "bold"))
@@ -48,19 +49,19 @@ class DetailOrder(tk.Frame):
         self.lbl_status = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text="Status:", compound='left')
         self.lbl_status.place(relx=0.594, rely=0.5, height=32, width=122)
 
-        self.data_book_name = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=order_data["book_name"], compound='left')
+        self.data_book_name = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=self.order_data["book_name"], compound='left')
         self.data_book_name.place(relx=0.69, rely=0.25, height=32, width=122)
 
-        self.data_qty = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=order_data["qty"], compound='left')
+        self.data_qty = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=self.order_data["qty"], compound='left')
         self.data_qty.place(relx=0.69, rely=0.313, height=32, width=122)
 
-        self.data_price = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=order_data["price"], compound='left')
+        self.data_price = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=self.order_data["price"], compound='left')
         self.data_price.place(relx=0.69, rely=0.375, height=32, width=122)
 
-        self.data_total_price = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=order_data["total_price"], compound='left')
+        self.data_total_price = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=self.order_data["total_price"], compound='left')
         self.data_total_price.place(relx=0.69, rely=0.438, height=32, width=122)
 
-        self.data_status = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=order_data["status"], compound='left')
+        self.data_status = ttk.Label(self, background="#d9d9d9", anchor='w', justify='left', text=self.order_data["status"], compound='left')
         self.data_status.place(relx=0.69, rely=0.5, height=32, width=200)
 
         if not self.is_paid:
@@ -81,6 +82,20 @@ class DetailOrder(tk.Frame):
             receipt_img_tk.grid(row=3, column=1)
             receipt_img_tk.place(relx=0.1, rely=0.3)
 
+        # Set order status button
+        decline_order_btn = tk.Button(self, command=lambda: self.set_order_status(OrderStatus.DECLINED()), text="Batalkan", font=("Calibri", 15), bd=3, fg="black")
+        decline_order_btn.place(x=20, y=120, width=120, height=35)
+
+        send_order_btn = tk.Button(self, command=lambda: self.set_order_status(OrderStatus.ON_SHIPPING()), text="Kirim", font=("Calibri", 15), bd=3, fg="black")
+        send_order_btn.place(x=20, y=150, width=120, height=35)
+
+    def set_order_status(self, order_status: str):
+        res: Response = self.ctrl.apis.set_order_status(self.order_data["id"], order_status)
+        if res.is_err():
+            return self.ctrl.show("AdminHomePage")
+
+        res: dict = res.result()
+        return res
 
     def get_book(self, bookId: str):
         res: Response = self.ctrl.apis.get_book(bookId)

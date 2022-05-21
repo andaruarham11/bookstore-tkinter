@@ -18,7 +18,7 @@ class PaymentPage(tk.Frame):
         order_data = self.get_order()
         self.is_paid = False
 
-        if order_data['status'] == 'PAID':
+        if order_data['status'] != 'WAITING_FOR_PAYMENT':
             self.is_paid = True
             self.payment = self.get_payment()
 

@@ -56,7 +56,7 @@ class AllOrderPage(tk.Frame):
         tabel_scroll.pack(side=tk_const.RIGHT, fill=tk_const.Y)
 
         # create tabel
-        self.my_tabel = ttk.Treeview(tabel_frame, columns=("id", "book_name", "qty", "price", "total_price", "status", "order_time"),
+        self.my_tabel = ttk.Treeview(tabel_frame, columns=("id", "customer_name", "book_name", "qty", "price", "total_price", "status", "order_time"),
                                      yscrollcommand=tabel_scroll.set)
 
         self.my_tabel.pack()
@@ -66,6 +66,7 @@ class AllOrderPage(tk.Frame):
 
         # headings
         self.my_tabel.heading("id", text="ID Order")
+        self.my_tabel.heading("customer_name", text="Nama Pembeli")
         self.my_tabel.heading("book_name", text="Nama Buku")
         self.my_tabel.heading("qty", text="Jumlah")
         self.my_tabel.heading("price", text="Harga Buku")
@@ -77,6 +78,7 @@ class AllOrderPage(tk.Frame):
 
         # format columns
         self.my_tabel.column("id", width=100)
+        self.my_tabel.column("customer_name", width=100)
         self.my_tabel.column("book_name", width=100)
         self.my_tabel.column("qty", width=5)
         self.my_tabel.column("price", width=15)
@@ -100,7 +102,7 @@ class AllOrderPage(tk.Frame):
                 tags = "oddrow"
 
             self.my_tabel.insert(parent='', index='end', text=f'{count + 1}', tags=tags, values=(
-                o["id"], o["book_name"], o["qty"], o["price"], o["total_price"], o["status"], o["order_time"],
+                o["id"], o["customer_name"], o["book_name"], o["qty"], o["price"], o["total_price"], o["status"], o["order_time"],
             ))
 
             count += 1
@@ -119,7 +121,7 @@ class AllOrderPage(tk.Frame):
     def get_book(self, bookId: str):
         res: Response = self.ctrl.apis.get_book(bookId)
         if res.is_err():
-            return self.ctrl.show("UserHomePage")
+            return self.ctrl.show("AdminHomePage")
 
         res: dict = res.result()
 
@@ -135,6 +137,14 @@ class AllOrderPage(tk.Frame):
             "gambar_buku": res["image"]
         }
 
+    def get_user(self, user_id: str):
+        res: Response = self.ctrl.apis.get_user(user_id)
+        if res.is_err():
+            return self.ctrl.show("AdminHomePage")
+
+        res: dict = res.result()
+        return res
+
     def get_orders(self):
 
         res: Response = self.ctrl.apis.get_all_orders()
@@ -143,7 +153,9 @@ class AllOrderPage(tk.Frame):
 
         orders_data = []
         for order in res.result():
+            print("ORDER", order)
             book = self.get_book(order["book_id"])
+            user = self.get_user(order["user_id"])
             orders_data.append({
                 "id": order["id"],
                 "book_name": book["nama_buku"],
@@ -151,6 +163,7 @@ class AllOrderPage(tk.Frame):
                 "qty": order["qty"],
                 "price": book["harga_buku"],
                 "total_price": order["total_price"],
-                "status": order["status"]
+                "status": order["status"],
+                "customer_name": user["name"],
             })
         return orders_data

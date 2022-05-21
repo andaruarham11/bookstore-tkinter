@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import tkinter as tk
-import urllib.parse
 from tkinter import messagebox
 
 import urllib3
+
+from models.order_status import OrderStatus
 
 
 class CoreApp(tk.Tk):
@@ -83,6 +84,9 @@ class Apis:
         except:
             return Response(is_error=True, error=response_json["error"])
 
+    def get_user(self, userId: str) -> Response:
+        return self.__get_result(self.__client.request('GET', f'http://localhost:4000/user/{userId}'))
+
     def get_book(self, bookId: str) -> Response:
         return self.__get_result(self.__client.request('GET', f'http://localhost:4000/book/{bookId}'))
 
@@ -109,6 +113,9 @@ class Apis:
     def do_order(self, user_id: str, book_id: str, qty: int) -> Response:
         payload = json.dumps({"user_id": user_id, "book_id": book_id, "qty": qty}).encode('utf-8')
         return self.__get_result(self.__client.request('POST', "http://localhost:4000/order", body=payload))
+
+    def set_order_status(self, order_id: str, order_status: str) -> Response:
+        return self.__get_result(self.__client.request('PUT', f"http://localhost:4000/order/{order_id}/setstatus/{order_status}"))
 
     def get_payment_by_orderid(self, order_id: str) -> Response:
         return self.__get_result(self.__client.request('GET', f'http://localhost:4000/payment/byorderid/{order_id}'))
