@@ -100,6 +100,9 @@ class Apis:
     def get_all_orders_by_userid(self, user_id: str) -> Response:
         return self.__get_result(self.__client.request('GET', f'http://localhost:4000/order/all/byuserid/{user_id}'))
 
+    def get_all_orders(self) -> Response:
+        return self.__get_result(self.__client.request('GET', f'http://localhost:4000/order/all/'))
+
     def get_order(self, order_id: str) -> Response:
         return self.__get_result(self.__client.request('GET', f'http://localhost:4000/order/{order_id}'))
 

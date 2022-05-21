@@ -47,5 +47,5 @@ class AdminHomePage(tk.Frame):
         book_btn = tk.Button(logo1_frame, command=lambda: self.ctrl.show("AdminDataBukuPage"), text="Data Buku", font=("Calibri", 15), bd=3, fg="black")
         book_btn.place(x=125, y=290, width=150, height=50)
 
-        customer_btn = tk.Button(logo2_frame, text="Data Pembayaran", font=("Calibri", 15), bd=3, fg="black")
+        customer_btn = tk.Button(logo2_frame, command=lambda: self.ctrl.show("AllOrderPage"), text="Data Pembayaran", font=("Calibri", 15), bd=3, fg="black")
         customer_btn.place(x=100, y=290, width=200, height=50)

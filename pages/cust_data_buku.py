@@ -49,7 +49,7 @@ class DataBukuPage(tk.Frame):
 
         # frame tabel
         tabel_frame = tk.Frame(self)
-        tabel_frame.place(x=10, y=150, width=1510, height=600)
+        tabel_frame.place(x=10, y=150, width=1300, height=600)
 
         # style
         style = ttk.Style()
